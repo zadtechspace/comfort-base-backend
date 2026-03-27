@@ -24,6 +24,7 @@ const userRouter = require('./Routes/User.routes')
 const authRouter = require('./Routes/Auth.routes')
 
 const cartRouter = require("./Routes/Cart.route")
+const productRouter = require('./Routes/Product.route')
 
     
 
@@ -44,6 +45,7 @@ app.use(express.urlencoded({extended:true}))
 app.use('/user', userRouter)
 app.use('/auth', authRouter)
 app.use('/cart', cartRouter)
+app.use('/product',productRouter)
 
 
 app.get('/Welcome',(req,res)=>{

@@ -27,6 +27,20 @@ const userSchema = new mongoose.Schema({
         type: Date, // 10-9-2025-09-53
         default: null
     },
+    profileImage:{
+        type: String,
+
+    },
+    address:{
+        type:String,
+      
+          
+    },
+
+    phone:{
+        type:Number, 
+        
+    }
    
 })
 

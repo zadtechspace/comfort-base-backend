@@ -31,7 +31,7 @@ const Register = async(req, res)=>{
 
                const verificationToken = generateString(8)
 
-               const forgotpasstoken = generateString(10)
+            //    const forgotpasstoken = generateString(10)
 
                 // generate expire time
 

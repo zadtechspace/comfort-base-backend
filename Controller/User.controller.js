@@ -29,10 +29,10 @@ const getAllUsers = async(req, res)=>{
        
 }
 const getUserId = async(req, res)=>{
-        const {_id}= req.params
+        const userId= req.user._id
         
         try {
-                const user = await userModel.findById(_id)
+                const user = await userModel.findById(userId)
                 console.log(user)
                 if (!user) {
                         return res.status(404).json({
@@ -109,10 +109,14 @@ const getOneUser = async(req, res)=>{
 }
 
 const updateUser = async(req, res)=>{
-        const {_id} = req.params()
+        const _id = req.user._id
+
+        const updatedProfileImage = req.file.path
+
+        const update ={...req.body,profileImage:updatedProfileImage}
 
         try {
-              const user =   await userModel.findByIdAndUpdate(_id, req.body)
+              const user =   await userModel.findByIdAndUpdate(_id,update)
               if(!user){
                 return res.status(404).json({
                         success:"false",
@@ -123,7 +127,7 @@ const updateUser = async(req, res)=>{
 
                res.status(200).json({
                         success:"true",
-                        message:"User Updated Successfully",
+                        message:"User Info Updated Successfully",
                         user
                 })
         } catch (error) {
