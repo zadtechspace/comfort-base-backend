@@ -39,7 +39,13 @@ const URL = process.env.URL
 
 
 
-app.use(cors())
+// app.use(cors())
+
+
+app.use(cors({
+  origin: "*", // allow all (for now)
+  credentials: true
+}));
 app.use(express.urlencoded({extended:true}))
 
 
