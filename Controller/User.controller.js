@@ -108,7 +108,7 @@ const getOneUser = async(req, res)=>{
         }
 }
 
-const updateUser = async(req, res)=>{
+const updateUser = async(req, res)=>{ 
         const _id = req.user._id
 
         const updatedProfileImage = req.file.path

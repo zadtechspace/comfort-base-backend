@@ -15,6 +15,7 @@ const connectdb = require ('./configDb/configdb')
 
 connectdb()
 
+
 require("./configDb/nodemailer")
 
 
@@ -56,4 +57,8 @@ app.get('/Welcome',(req,res)=>{
 app.listen(PORT,()=>{
    console.log(`App is running on port ${PORT}`)
 })
+
+
+
+
 

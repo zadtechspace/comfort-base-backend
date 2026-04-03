@@ -3,13 +3,39 @@
 
     const AddToCart = async(req,res)=>{
             const user = req.user._id
-        const {quantity,productprice } = req.body
+            console.log(user)
+         const { quantity, productprice, name, image, productId } = req.body;
             try {
-                const cartItem = await cartModel.create({user,...req.body,amount:quantity*productprice})
+                    // check if item exist or not
+
+                const  existingCartItem = await cartModel.findOne({user, productId})
+
+                if(existingCartItem){
+                    existingCartItem.quantity += quantity
+                    existingCartItem.totalPrice = existingCartItem.quantity * productprice
+                    await existingCartItem.save()
+
+                    return res.status(200).json({
+                        success:true,
+                        message:"Cart item quantity updated successfully",
+                        data:existingCartItem
+                    })
+                }
+
+                const cartItem = await cartModel.create({
+                    user,
+                    name,
+                    image,
+                    quantity,
+                    productprice,
+                    totalPrice: quantity * productprice,
+                    productId
+
+                })
                 res.status(200).json({
                     success:true,
                     message:"Item added to cart successfully",
-                    data:cartItem
+                    data:cartItem 
                 })
             } catch (error) {
                 console.log(error)
@@ -28,13 +54,12 @@
                     message:"Cart is empty, please add items"
                 })
             }
-            
-                 res.status(200).json({
-                    success:true,
-                    message:'Cart fetched successfully',
-                    data:getCartedItems
+            res.status(200).json({
+               success:true,
+               message:'Cart fetched successfully',
+               data:getCartedItems
 
-                })
+           })
             
         } catch (error) {
             console.log(error)
@@ -44,10 +69,13 @@
     const incrementCartItemQuantity = async (req,res)=>{
         // collect the item id from req.params
 
-        const itemId = req.params.id
+        const itemId = req.params._id
 
+        console.log(itemId)
         try {
-            const cartItem = await cartModel.findById(itemId)
+            const cartItem = await cartModel.findById(itemId) 
+
+            console.log(cartItem)
 
             if(!cartItem){
                 return res.status(404).json({
@@ -56,8 +84,10 @@
                 })
             }
 
+            // const {quantity, productprice} = req.body
+
             cartItem.quantity += 1
-            cartItem.amount = cartItem.quantity * cartItem.productprice
+            cartItem.totalPrice = cartItem.quantity * cartItem.productprice
 
             await cartItem.save()
 
@@ -73,7 +103,9 @@
     const decrementCartItemQuantity = async (req,res)=>{
         // collect the item id from req.params
 
-        const itemId = req.params.id
+        const itemId = req.params._id
+
+        
         try {
             const cartItem = await cartModel.findById(itemId)
 
@@ -83,9 +115,14 @@
                     message:"Cart item not found"
                 })
             }
+            if (cartItem.quantity <= 1) {
+                return res.status(400).json({
+                    message: "Cannot go below 1"
+                });
+                }
 
-            cartItem.quantity -=1
-            cartItem.amount = cartItem.quantity / cartItem.productprice
+            cartItem.quantity = cartItem.quantity - 1
+            cartItem.totalPrice = cartItem.quantity * cartItem.productprice
 
             await cartItem.save()
 
@@ -99,5 +136,21 @@
         }
     }
 
+    const removeCartItem = async (req,res)=>{
+        const itemId = req.params._id
 
-    module.exports = {AddToCart,GetCart,incrementCartItemQuantity,decrementCartItemQuantity}
+        try {
+            const cartItem = await cartModel.findByIdAndDelete(itemId)
+            res.status(200).json({
+                success:true,
+                message:"Cart item removed successfully",
+                data:cartItem
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
+
+    module.exports = {AddToCart,GetCart,incrementCartItemQuantity,decrementCartItemQuantity,removeCartItem}
